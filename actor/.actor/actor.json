@@ -1,0 +1,30 @@
+{
+  "actorSpecification": 1,
+  "name": "marketpulse-ai",
+  "title": "MarketPulse AI - Competitor & Price Intelligence",
+  "description": "An AI-powered market intelligence agent that scrapes live competitor prices and web data, then uses LLMs to generate structured business insights and reports.",
+  "version": "1.0",
+  "input": {
+    "title": "MarketPulse AI Input",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+      "productQuery": {
+        "title": "Product / Market Query",
+        "type": "string",
+        "description": "The product, service, or market you want to analyze (e.g. 'wireless headphones', 'project management SaaS')",
+        "editor": "textfield",
+        "example": "wireless noise cancelling headphones"
+      },
+      "maxResults": {
+        "title": "Max Results to Scrape",
+        "type": "integer",
+        "description": "Maximum number of products/results to scrape. Use 5 for testing (~$0.02), 20 for final demo (~$0.10).",
+        "default": 5,
+        "minimum": 3,
+        "maximum": 50
+      }
+    },
+    "required": ["productQuery"]
+  }
+}

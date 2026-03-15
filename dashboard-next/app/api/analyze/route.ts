@@ -98,7 +98,31 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "openai/gpt-4o-mini",
         messages: [
-          { role: "system", content: `You are a market intelligence analyst. Return a structured markdown report with these exact sections:\n## Summary\n(2-3 sentence overview)\n## Sentiment\n(one word: Positive / Negative / Neutral, then brief reason)\n## Key Prices\n(bullet list of prices found)\n## Key Insights\n(5 bullet points)\n## Recommendation\n(1 actionable sentence)` },
+          {
+            role: "system",
+            content: `You are a competitive market intelligence analyst for our company. 
+            Your job is to analyze a competing company and extract insights that help our company make strategic decisions.
+
+            Use the search results to understand the competitor's position, strengths, weaknesses, pricing, products, and recent developments. 
+            Focus on what this competitor is doing in the market and what strategic response our company should consider.
+
+            Return a structured markdown report with these exact sections:
+
+            ## Summary
+            (2-3 sentence overview of the competitor's current market position and activity)
+
+            ## Sentiment
+            (one word: Positive / Negative / Neutral regarding the competitor's market momentum, then a brief reason)
+
+            ## Key Prices
+            (bullet list of relevant competitor prices such as product pricing, service tiers, subscription costs, or financial metrics)
+
+            ## Key Insights
+            (5 bullet points highlighting the competitor's strengths, weaknesses, strategy, product positioning, and market opportunities we can exploit)
+
+            ## Recommendation
+            (1 actionable sentence describing what our company should do strategically in response to this competitor)`
+          },
           { role: "user", content: `Competitor: ${name}\n\nSearch results:\n${searchResults || "No results — provide general analysis."}` },
         ],
         max_tokens: 800,

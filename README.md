@@ -1,5 +1,5 @@
 # 📊 MarketPulse AI
-> AI-powered competitor & price intelligence agent — built for GenAI Zürich Hackathon 2026
+> AI-powered competitor & price intelligence agent
 
 [![Apify](https://img.shields.io/badge/Powered%20by-Apify-brightgreen)](https://apify.com)
 [![OpenRouter](https://img.shields.io/badge/LLM-OpenRouter-blue)](https://openrouter.ai)

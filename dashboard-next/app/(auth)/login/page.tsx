@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 // ── Animation variants ────────────────────────────────────────────────────────
-const containerVariants = {
+// 2. Explicitly type your variants
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -14,12 +15,16 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } 
+  },
 };
 
-const glowVariants = {
+const glowVariants: Variants = {
   initial: { scale: 0.8, opacity: 0 },
   animate: {
     scale: [1, 1.05, 1],
@@ -27,6 +32,7 @@ const glowVariants = {
     transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
   },
 };
+
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface FormState {

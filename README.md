@@ -126,5 +126,3 @@ streamlit run dashboard.py
 - Respects robots.txt via Apify's managed scrapers
 
 ---
-
-*Built for GenAI Zürich Hackathon 2026 — Apify Challenge*

@@ -348,7 +348,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-violet-500 flex items-center justify-center">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                <path d="M2 12L6 7L9 10L13 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 12L6 7L9 10L13 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <span className="font-semibold text-sm tracking-tight">MarketPulse AI</span>
@@ -380,7 +380,7 @@ export default function DashboardPage() {
             <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={handleLogout}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 text-xs hover:text-red-400 hover:border-red-500/25 transition-colors">
               <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
-                <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Logout
             </motion.button>
@@ -477,7 +477,7 @@ export default function DashboardPage() {
                     <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => fileInputRef.current?.click()}
                       className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-300 text-xs hover:border-violet-500/30 transition-colors">
                       <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
-                        <path d="M8 1v9M5 4l3-3 3 3M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M8 1v9M5 4l3-3 3 3M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                       Upload .txt
                     </motion.button>
@@ -486,7 +486,7 @@ export default function DashboardPage() {
                         onClick={() => analyzeAll(competitors, true)} disabled={runningCount > 0}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs hover:bg-violet-500/20 transition-colors disabled:opacity-40">
                         <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
-                          <path d="M1 8a7 7 0 1014 0A7 7 0 001 8zM8 5v3l2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                          <path d="M1 8a7 7 0 1014 0A7 7 0 001 8zM8 5v3l2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                         </svg>
                         Refresh All
                       </motion.button>
@@ -517,7 +517,7 @@ export default function DashboardPage() {
                         className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full" />
                     ) : (
                       <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                        <path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                       </svg>
                     )}
                     Add
@@ -527,7 +527,7 @@ export default function DashboardPage() {
                 <div className="space-y-2">
                   <AnimatePresence mode="popLayout">
                     {competitorsLoading ? (
-                      [1,2,3].map(i => <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><Skeleton className="h-16" /></motion.div>)
+                      [1, 2, 3].map(i => <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><Skeleton className="h-16" /></motion.div>)
                     ) : competitors.length === 0 ? (
                       <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         className="flex flex-col items-center justify-center py-14 gap-3">
@@ -586,7 +586,7 @@ export default function DashboardPage() {
 
                                 <motion.div animate={{ rotate: expandedId === c._id ? 180 : 0 }} transition={{ duration: 0.2 }} className="text-zinc-600 flex-shrink-0">
                                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                                    <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                    <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                   </svg>
                                 </motion.div>
 
@@ -596,7 +596,7 @@ export default function DashboardPage() {
                                     disabled={analysisStatus[c._id] === "running"}
                                     className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.05] hover:bg-violet-500/15 border border-white/[0.08] hover:border-violet-500/30 text-zinc-400 hover:text-violet-300 transition-colors disabled:opacity-40">
                                     <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                                      <path d="M5 3l8 5-8 5V3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                      <path d="M5 3l8 5-8 5V3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                     <span className="text-xs hidden sm:inline">Analyze</span>
                                   </motion.button>
@@ -613,7 +613,7 @@ export default function DashboardPage() {
                                     onClick={(e) => { e.stopPropagation(); startEdit(c); }}
                                     className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.05] hover:bg-violet-500/20 border border-white/[0.08] hover:border-violet-500/40 text-zinc-400 hover:text-violet-300 transition-colors">
                                     <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                                      <path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                      <path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                     <span className="text-xs hidden sm:inline">Edit</span>
                                   </motion.button>
@@ -626,7 +626,7 @@ export default function DashboardPage() {
                                         className="w-3.5 h-3.5 border border-red-400/40 border-t-red-400 rounded-full" />
                                     ) : (
                                       <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                                        <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 9h8l1-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 9h8l1-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                       </svg>
                                     )}
                                     <span className="text-xs hidden sm:inline">Delete</span>
@@ -673,6 +673,14 @@ export default function DashboardPage() {
                     )}
                   </AnimatePresence>
                 </div>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => router.push("/discover")}
+                  className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-300 text-sm hover:bg-violet-500/20 transition-colors"
+                >
+                  🔎 Discover Competitors
+                </motion.button>
               </motion.div>
             )}
 
@@ -689,7 +697,7 @@ export default function DashboardPage() {
                       <p className="text-zinc-600 text-xs text-center max-w-[240px]">
                         {competitors.length === 0 ? "Add competitors in the Watchlist tab first."
                           : runningCount > 0 ? "Analysis is running — results will appear here shortly."
-                          : "Go to Watchlist and click Analyze on any competitor."}
+                            : "Go to Watchlist and click Analyze on any competitor."}
                       </p>
                     </div>
                   ) : (
@@ -746,7 +754,7 @@ export default function DashboardPage() {
                   <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={fetchLogs}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 text-xs hover:text-white transition-colors">
                     <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
-                      <path d="M1 8a7 7 0 0013.5-2M14.5 1v5h-5M15 8a7 7 0 01-13.5 2M1.5 15v-5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <path d="M1 8a7 7 0 0013.5-2M14.5 1v5h-5M15 8a7 7 0 01-13.5 2M1.5 15v-5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                     </svg>
                     Refresh
                   </motion.button>
@@ -762,10 +770,9 @@ export default function DashboardPage() {
                     {activityLogs.map((log, i) => (
                       <motion.div key={log._id} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.03 }}
-                        className={`flex items-start gap-3 p-3 rounded-xl border text-xs ${
-                          log.status === "success" ? "bg-emerald-500/[0.04] border-emerald-500/15" :
-                          log.status === "error" ? "bg-red-500/[0.04] border-red-500/15" : "bg-violet-500/[0.04] border-violet-500/15"
-                        }`}>
+                        className={`flex items-start gap-3 p-3 rounded-xl border text-xs ${log.status === "success" ? "bg-emerald-500/[0.04] border-emerald-500/15" :
+                            log.status === "error" ? "bg-red-500/[0.04] border-red-500/15" : "bg-violet-500/[0.04] border-violet-500/15"
+                          }`}>
                         <span className="text-base flex-shrink-0 mt-0.5">
                           {log.status === "success" ? "✅" : log.status === "error" ? "❌" : "⚡"}
                         </span>

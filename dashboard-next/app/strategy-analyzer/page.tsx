@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -60,7 +60,6 @@ function timeAgo(date: string) {
   return `${Math.floor(h / 24)}d ago`;
 }
 
-// ── Build the intelligence string injected into the prompt ────────────────────
 function buildIntelligenceBlock(ctx: StoredContext): string {
   if (!ctx.report) return `Competitor: ${ctx.competitorName} (no intelligence report available yet)`;
   const r = ctx.report;
@@ -78,7 +77,6 @@ function buildIntelligenceBlock(ctx: StoredContext): string {
 function CompetitorContextPanel({ ctx }: { ctx: StoredContext }) {
   const [open, setOpen] = useState(true);
   const r = ctx.report;
-
   return (
     <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
       className="border border-violet-500/20 rounded-2xl overflow-hidden bg-violet-500/[0.03]">
@@ -118,19 +116,16 @@ function CompetitorContextPanel({ ctx }: { ctx: StoredContext }) {
             exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
             <div className="border-t border-violet-500/15 px-5 pb-5 pt-4 space-y-4">
               {!r ? (
-                <p className="text-zinc-600 text-xs text-center py-3">No intelligence report available for this competitor yet — analysis will still run.</p>
+                <p className="text-zinc-600 text-xs text-center py-3">No intelligence report available — analysis will still run.</p>
               ) : (
                 <>
-                  {/* Summary sentiment bar */}
                   <div className={`flex items-start gap-3 p-3 rounded-xl border ${sentimentBg(r.sentiment)}`}>
                     <span className={`text-base font-bold flex-shrink-0 ${sentimentColor(r.sentiment)}`}>
                       {r.sentiment === "Positive" ? "↑" : r.sentiment === "Negative" ? "↓" : "→"}
                     </span>
                     <p className="text-zinc-300 text-xs leading-relaxed">{r.summary}</p>
                   </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Key insights */}
                     {r.keyInsights?.length > 0 && (
                       <div>
                         <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-2 font-medium">Key Insights</p>
@@ -143,22 +138,17 @@ function CompetitorContextPanel({ ctx }: { ctx: StoredContext }) {
                         </ul>
                       </div>
                     )}
-
                     <div className="space-y-3">
-                      {/* Prices */}
                       {r.topPrices?.length > 0 && (
                         <div>
                           <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-2 font-medium">Prices Found</p>
                           <div className="flex flex-wrap gap-1.5">
                             {r.topPrices.slice(0, 4).map((p, i) => (
-                              <span key={i} className="text-[10px] bg-white/[0.04] border border-white/[0.08] rounded-md px-2 py-0.5 text-zinc-400 font-mono">
-                                {p.price}
-                              </span>
+                              <span key={i} className="text-[10px] bg-white/[0.04] border border-white/[0.08] rounded-md px-2 py-0.5 text-zinc-400 font-mono">{p.price}</span>
                             ))}
                           </div>
                         </div>
                       )}
-                      {/* Recommendation */}
                       {r.recommendation && (
                         <div className="p-2.5 rounded-lg bg-violet-500/[0.06] border border-violet-500/15">
                           <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-1 font-medium">Their Recommendation</p>
@@ -167,7 +157,6 @@ function CompetitorContextPanel({ ctx }: { ctx: StoredContext }) {
                       )}
                     </div>
                   </div>
-
                   <p className="text-zinc-700 text-[10px] italic border-t border-white/[0.05] pt-3">
                     💡 This full report is automatically injected into the AI strategy analysis below.
                   </p>
@@ -236,7 +225,6 @@ function DimensionBar({ dimension, score, reasoning }: { dimension: string; scor
   );
 }
 
-// ── Analysis result card ──────────────────────────────────────────────────────
 function AnalysisCard({ entry }: { entry: AnalysisEntry }) {
   const [tab, setTab] = useState<"overview" | "evidence" | "opinion">("overview");
   const a = entry.analysis;
@@ -245,8 +233,6 @@ function AnalysisCard({ entry }: { entry: AnalysisEntry }) {
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
       className="border border-white/[0.07] rounded-2xl overflow-hidden bg-white/[0.02]">
-
-      {/* Score + verdict header */}
       <div className="px-5 py-4 border-b border-white/[0.06] flex items-start gap-4 bg-white/[0.02]">
         <div className="relative flex-shrink-0">
           <ScoreRing score={a.overallScore} size={72} />
@@ -258,21 +244,17 @@ function AnalysisCard({ entry }: { entry: AnalysisEntry }) {
         <div className="flex-1 min-w-0 pt-1">
           <div className="flex items-center gap-2 flex-wrap mb-1.5">
             <VerdictBadge verdict={a.verdict} />
-            <span className="text-zinc-600 text-xs">
-              {new Date(entry.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-            </span>
+            <span className="text-zinc-600 text-xs">{new Date(entry.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
           </div>
           <p className="text-sm text-zinc-300 leading-relaxed line-clamp-2">{a.summary}</p>
         </div>
       </div>
 
-      {/* Strategy text */}
       <div className="px-5 py-3 border-b border-white/[0.04] bg-black/20">
         <p className="text-zinc-600 text-[10px] uppercase tracking-wider mb-1">Your Strategy</p>
         <p className="text-zinc-400 text-xs leading-relaxed italic">"{entry.strategy}"</p>
       </div>
 
-      {/* Tabs */}
       <div className="flex border-b border-white/[0.06]">
         {(["overview", "evidence", "opinion"] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
@@ -321,7 +303,6 @@ function AnalysisCard({ entry }: { entry: AnalysisEntry }) {
             )}
           </motion.div>
         )}
-
         {tab === "evidence" && (
           <motion.div key="evidence" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="p-5">
             <p className="text-zinc-500 text-[10px] uppercase tracking-wider font-medium mb-3">Supporting Evidence</p>
@@ -344,7 +325,6 @@ function AnalysisCard({ entry }: { entry: AnalysisEntry }) {
             </div>
           </motion.div>
         )}
-
         {tab === "opinion" && (
           <motion.div key="opinion" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="p-5">
             <div className="flex items-start gap-3 mb-4">
@@ -370,8 +350,8 @@ const QUICK_PROMPTS = [
   "Double down on content marketing & SEO",
 ];
 
-// ── Main page ─────────────────────────────────────────────────────────────────
-export default function StrategyAnalyzerPage() {
+// ── Inner page — uses useSearchParams, must be inside Suspense ────────────────
+function StrategyAnalyzerInner() {
   const searchParams = useSearchParams();
 
   const [storedCtx, setStoredCtx] = useState<StoredContext | null>(null);
@@ -383,7 +363,6 @@ export default function StrategyAnalyzerPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Read sessionStorage set by dashboard's navigateToStrategy()
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem("strategyContext");
@@ -395,10 +374,9 @@ export default function StrategyAnalyzerPage() {
           setContextOverride(`Competing against ${ctx.competitorName}`);
         }
       }
-    } catch { /* ignore parse errors */ }
+    } catch { /* ignore */ }
   }, [searchParams]);
 
-  // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -409,7 +387,6 @@ export default function StrategyAnalyzerPage() {
   const analyzeStrategy = async (strategyText: string, ctxText: string) => {
     setLoading(true);
     setError("");
-
     try {
       const res = await fetch("/api/strategy", {
         method: "POST",
@@ -420,20 +397,14 @@ export default function StrategyAnalyzerPage() {
           intelligenceBlock: storedCtx ? buildIntelligenceBlock(storedCtx) : "",
         }),
       });
-
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.message ?? "Analysis failed");
       }
-
       const { analysis } = await res.json();
-
       const entry: AnalysisEntry = {
-        id: Date.now().toString(),
-        strategy: strategyText,
-        competitorContext: ctxText,
-        analysis,
-        timestamp: new Date(),
+        id: Date.now().toString(), strategy: strategyText,
+        competitorContext: ctxText, analysis, timestamp: new Date(),
       };
       setAnalyses(prev => [entry, ...prev]);
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
@@ -447,13 +418,187 @@ export default function StrategyAnalyzerPage() {
   const canSubmit = strategy.trim().length > 10 && !loading;
 
   return (
+    <main className="max-w-4xl mx-auto px-6 py-8 space-y-6">
+
+      {/* Header banner */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        className="relative rounded-2xl overflow-hidden border border-white/[0.08] px-8 py-7"
+        style={{ background: "linear-gradient(135deg,#0f0a1e 0%,#130d24 60%,#0a0f1e 100%)" }}>
+        <div className="absolute -top-12 -right-12 w-56 h-56 rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle,rgba(124,58,237,0.1) 0%,transparent 70%)" }} />
+        <div className="relative">
+          <p className="text-zinc-500 text-xs font-mono tracking-widest uppercase mb-1">Intelligence Suite</p>
+          <h1 className="text-2xl font-bold tracking-tight mb-2">Strategy <span className="text-violet-400">Analyzer</span></h1>
+          <p className="text-zinc-500 text-sm max-w-lg">
+            Describe your business strategy and get an AI-powered effectiveness analysis — with real-world evidence, competitive context, and an honest opinion.
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Competitor intel panel */}
+      <AnimatePresence>
+        {storedCtx && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+            <CompetitorContextPanel ctx={storedCtx} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Input form */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+        className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-500/25 flex items-center justify-center text-base">🧠</div>
+          <div>
+            <h2 className="font-semibold text-white text-sm">Analyze Strategy</h2>
+            <p className="text-zinc-500 text-xs">
+              {storedCtx
+                ? `Describe your plan against ${storedCtx.competitorName} — intelligence pre-loaded`
+                : "Describe your plan — get AI-powered effectiveness analysis with evidence"}
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <label className="block text-zinc-500 text-[10px] uppercase tracking-wider mb-1.5 font-medium">Your Strategy *</label>
+            <textarea ref={textareaRef} value={strategy} onChange={(e) => setStrategy(e.target.value)}
+              placeholder={storedCtx
+                ? `e.g. To counter ${storedCtx.competitorName}'s ${storedCtx.report?.sentiment?.toLowerCase() ?? "current"} position, we plan to…`
+                : "e.g. We plan to undercut competitor pricing by 15% in Q2, focus on enterprise clients, and offer bundled cloud storage to differentiate…"}
+              rows={4}
+              className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/40 transition-colors resize-none leading-relaxed"
+            />
+            <p className="text-zinc-700 text-[10px] mt-1 ml-1">{strategy.length} chars — be specific for better analysis</p>
+          </div>
+
+          <div>
+            <label className="block text-zinc-500 text-[10px] uppercase tracking-wider mb-1.5 font-medium">
+              Competitor / Market Context {storedCtx ? "(pre-filled from dashboard)" : "(optional)"}
+            </label>
+            <input type="text" value={contextOverride} onChange={(e) => setContextOverride(e.target.value)}
+              placeholder="e.g. We're competing against Microsoft, Salesforce in the CRM space targeting mid-market…"
+              className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/40 transition-colors"
+            />
+            {storedCtx && (
+              <p className="text-violet-500 text-[10px] mt-1 ml-1">
+                ✓ Full intelligence report for {storedCtx.competitorName} injected into the AI prompt automatically.
+              </p>
+            )}
+          </div>
+
+          <motion.button
+            whileHover={{ scale: canSubmit ? 1.01 : 1 }} whileTap={{ scale: canSubmit ? 0.98 : 1 }}
+            onClick={() => canSubmit && analyzeStrategy(strategy.trim(), contextOverride.trim())}
+            disabled={!canSubmit}
+            className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold transition-all disabled:opacity-30 flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                  className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full" />
+                Analyzing strategy…
+              </>
+            ) : (
+              <>
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path d="M5 3l8 5-8 5V3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Analyze Strategy
+              </>
+            )}
+          </motion.button>
+        </div>
+      </motion.div>
+
+      {/* Quick prompts */}
+      {!storedCtx && analyses.length === 0 && !loading && (
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+          <p className="text-zinc-600 text-xs uppercase tracking-wider mb-2 font-medium">Quick examples</p>
+          <div className="flex flex-wrap gap-2">
+            {QUICK_PROMPTS.map((p) => (
+              <button key={p} onClick={() => setStrategy(p)}
+                className="text-xs px-3 py-1.5 rounded-lg border border-white/[0.07] bg-white/[0.02] text-zinc-400 hover:text-violet-300 hover:border-violet-500/30 transition-colors">
+                {p}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Error */}
+      <AnimatePresence>
+        {error && (
+          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            <span>⚠</span> {error}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Loading skeleton */}
+      <AnimatePresence>
+        {loading && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="border border-white/[0.07] rounded-2xl bg-white/[0.02] p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="w-10 h-10 border-2 border-violet-500/30 border-t-violet-500 rounded-full flex-shrink-0" />
+              <div className="flex-1 space-y-2">
+                <motion.div animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 1.4, repeat: Infinity }}
+                  className="h-3 bg-white/[0.07] rounded-full w-2/3" />
+                <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 1.6, repeat: Infinity, delay: 0.2 }}
+                  className="h-2 bg-white/[0.05] rounded-full w-1/2" />
+              </div>
+            </div>
+            {[1, 2, 3].map(i => (
+              <motion.div key={i} animate={{ opacity: [0.2, 0.45, 0.2] }} transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.15 }}
+                className="h-2.5 bg-white/[0.05] rounded-full" style={{ width: `${75 - i * 12}%` }} />
+            ))}
+            <p className="text-center text-zinc-600 text-xs pt-2 font-mono">
+              {storedCtx ? `Analyzing against ${storedCtx.competitorName} intelligence…` : "Gathering market intelligence…"}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Results */}
+      <div ref={resultsRef} className="space-y-5">
+        <AnimatePresence>
+          {analyses.map(entry => <AnalysisCard key={entry.id} entry={entry} />)}
+        </AnimatePresence>
+      </div>
+
+      {/* Empty state */}
+      {analyses.length === 0 && !loading && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+          className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-2xl">🧠</div>
+          <p className="text-zinc-400 text-sm font-medium">
+            {storedCtx ? `Ready to analyze against ${storedCtx.competitorName}` : "No analyses yet"}
+          </p>
+          <p className="text-zinc-600 text-xs max-w-[280px]">
+            {storedCtx
+              ? `The intelligence report for ${storedCtx.competitorName} is loaded above. Describe your counter-strategy and hit Analyze.`
+              : "Describe your strategy above to get a detailed effectiveness analysis with real-world evidence and an honest AI opinion."}
+          </p>
+        </motion.div>
+      )}
+
+    </main>
+  );
+}
+
+// ── Root export — Suspense wraps the inner component that calls useSearchParams ─
+export default function StrategyAnalyzerPage() {
+  return (
     <div className="min-h-screen bg-[#070709] text-white">
       <div className="fixed inset-0 opacity-[0.025] pointer-events-none"
         style={{ backgroundImage: `linear-gradient(#a78bfa 1px,transparent 1px),linear-gradient(90deg,#a78bfa 1px,transparent 1px)`, backgroundSize: "40px 40px" }} />
       <div className="fixed top-0 left-1/3 w-[600px] h-[600px] rounded-full pointer-events-none"
         style={{ background: "radial-gradient(circle,rgba(124,58,237,0.05) 0%,transparent 70%)" }} />
 
-      {/* NAV */}
+      {/* NAV lives outside Suspense — no dynamic data needed */}
       <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#070709]/80 backdrop-blur-xl">
         <div className="max-w-4xl mx-auto px-6 h-14 flex items-center gap-3">
           <a href="/dashboard" className="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 transition-colors text-xs">
@@ -470,176 +615,15 @@ export default function StrategyAnalyzerPage() {
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-6 py-8 space-y-6">
-
-        {/* Header banner */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-2xl overflow-hidden border border-white/[0.08] px-8 py-7"
-          style={{ background: "linear-gradient(135deg,#0f0a1e 0%,#130d24 60%,#0a0f1e 100%)" }}>
-          <div className="absolute -top-12 -right-12 w-56 h-56 rounded-full pointer-events-none"
-            style={{ background: "radial-gradient(circle,rgba(124,58,237,0.1) 0%,transparent 70%)" }} />
-          <div className="relative">
-            <p className="text-zinc-500 text-xs font-mono tracking-widest uppercase mb-1">Intelligence Suite</p>
-            <h1 className="text-2xl font-bold tracking-tight mb-2">Strategy <span className="text-violet-400">Analyzer</span></h1>
-            <p className="text-zinc-500 text-sm max-w-lg">
-              Describe your business strategy and get an AI-powered effectiveness analysis — with real-world evidence, competitive context, and an honest opinion.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Competitor intel panel — only shown when navigated from dashboard */}
-        <AnimatePresence>
-          {storedCtx && (
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              <CompetitorContextPanel ctx={storedCtx} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Input form */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-500/25 flex items-center justify-center text-base">🧠</div>
-            <div>
-              <h2 className="font-semibold text-white text-sm">Analyze Strategy</h2>
-              <p className="text-zinc-500 text-xs">
-                {storedCtx
-                  ? `Describe your plan against ${storedCtx.competitorName} — intelligence pre-loaded`
-                  : "Describe your plan — get AI-powered effectiveness analysis with evidence"}
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div>
-              <label className="block text-zinc-500 text-[10px] uppercase tracking-wider mb-1.5 font-medium">
-                Your Strategy *
-              </label>
-              <textarea ref={textareaRef} value={strategy} onChange={(e) => setStrategy(e.target.value)}
-                placeholder={storedCtx
-                  ? `e.g. To counter ${storedCtx.competitorName}'s ${storedCtx.report?.sentiment?.toLowerCase() ?? "current"} position, we plan to…`
-                  : "e.g. We plan to undercut competitor pricing by 15% in Q2, focus on enterprise clients, and offer bundled cloud storage with our SaaS product to differentiate…"}
-                rows={4}
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/40 transition-colors resize-none leading-relaxed"
-              />
-              <p className="text-zinc-700 text-[10px] mt-1 ml-1">{strategy.length} chars — be specific for better analysis</p>
-            </div>
-
-            <div>
-              <label className="block text-zinc-500 text-[10px] uppercase tracking-wider mb-1.5 font-medium">
-                Competitor / Market Context {storedCtx ? "(pre-filled from dashboard)" : "(optional)"}
-              </label>
-              <input type="text" value={contextOverride} onChange={(e) => setContextOverride(e.target.value)}
-                placeholder="e.g. We're competing against Microsoft, Salesforce in the CRM space targeting mid-market…"
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/40 transition-colors"
-              />
-              {storedCtx && (
-                <p className="text-violet-500 text-[10px] mt-1 ml-1">
-                  ✓ Full intelligence report for {storedCtx.competitorName} injected into the AI prompt automatically.
-                </p>
-              )}
-            </div>
-
-            <motion.button
-              whileHover={{ scale: canSubmit ? 1.01 : 1 }} whileTap={{ scale: canSubmit ? 0.98 : 1 }}
-              onClick={() => canSubmit && analyzeStrategy(strategy.trim(), contextOverride.trim())}
-              disabled={!canSubmit}
-              className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold transition-all disabled:opacity-30 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                    className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full" />
-                  Analyzing strategy…
-                </>
-              ) : (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                    <path d="M5 3l8 5-8 5V3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Analyze Strategy
-                </>
-              )}
-            </motion.button>
-          </div>
-        </motion.div>
-
-        {/* Quick prompts — only shown when no stored context and no results yet */}
-        {!storedCtx && analyses.length === 0 && !loading && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-            <p className="text-zinc-600 text-xs uppercase tracking-wider mb-2 font-medium">Quick examples</p>
-            <div className="flex flex-wrap gap-2">
-              {QUICK_PROMPTS.map((p) => (
-                <button key={p} onClick={() => { setStrategy(p); }}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-white/[0.07] bg-white/[0.02] text-zinc-400 hover:text-violet-300 hover:border-violet-500/30 transition-colors">
-                  {p}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {/* Error */}
-        <AnimatePresence>
-          {error && (
-            <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-              <span>⚠</span> {error}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Loading skeleton */}
-        <AnimatePresence>
-          {loading && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="border border-white/[0.07] rounded-2xl bg-white/[0.02] p-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-10 h-10 border-2 border-violet-500/30 border-t-violet-500 rounded-full flex-shrink-0" />
-                <div className="flex-1 space-y-2">
-                  <motion.div animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 1.4, repeat: Infinity }}
-                    className="h-3 bg-white/[0.07] rounded-full w-2/3" />
-                  <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 1.6, repeat: Infinity, delay: 0.2 }}
-                    className="h-2 bg-white/[0.05] rounded-full w-1/2" />
-                </div>
-              </div>
-              {[1, 2, 3].map(i => (
-                <motion.div key={i} animate={{ opacity: [0.2, 0.45, 0.2] }} transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.15 }}
-                  className="h-2.5 bg-white/[0.05] rounded-full" style={{ width: `${75 - i * 12}%` }} />
-              ))}
-              <p className="text-center text-zinc-600 text-xs pt-2 font-mono">
-                {storedCtx ? `Analyzing against ${storedCtx.competitorName} intelligence…` : "Gathering market intelligence…"}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Results */}
-        <div ref={resultsRef} className="space-y-5">
-          <AnimatePresence>
-            {analyses.map(entry => <AnalysisCard key={entry.id} entry={entry} />)}
-          </AnimatePresence>
+      {/* Suspense boundary required by Next.js for useSearchParams in App Router */}
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+            className="w-8 h-8 rounded-full border-2 border-violet-500/30 border-t-violet-500" />
         </div>
-
-        {/* Empty state */}
-        {analyses.length === 0 && !loading && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-            className="flex flex-col items-center justify-center py-16 gap-3 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-2xl">🧠</div>
-            <p className="text-zinc-400 text-sm font-medium">
-              {storedCtx ? `Ready to analyze against ${storedCtx.competitorName}` : "No analyses yet"}
-            </p>
-            <p className="text-zinc-600 text-xs max-w-[280px]">
-              {storedCtx
-                ? `The intelligence report for ${storedCtx.competitorName} is loaded above. Describe your counter-strategy and hit Analyze.`
-                : "Describe your strategy above to get a detailed effectiveness analysis with real-world evidence and an honest AI opinion."}
-            </p>
-          </motion.div>
-        )}
-
-      </main>
+      }>
+        <StrategyAnalyzerInner />
+      </Suspense>
     </div>
   );
 }
